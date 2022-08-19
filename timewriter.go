@@ -28,12 +28,12 @@ type TimeWriter struct {
 	Compress      bool
 	ReserveDay    int
 	LogFilePrefix string
-
-	curFilename string
-	file        *os.File
-	mu          sync.Mutex
-	startMill   sync.Once
-	millCh      chan bool
+	Screen        bool
+	curFilename   string
+	file          *os.File
+	mu            sync.Mutex
+	startMill     sync.Once
+	millCh        chan bool
 }
 
 func (l *TimeWriter) Write(p []byte) (n int, err error) {
@@ -50,7 +50,9 @@ func (l *TimeWriter) Write(p []byte) (n int, err error) {
 	if l.curFilename != l.filename() {
 		l.rotate()
 	}
-
+	if l.Screen {
+		print(fmt.Sprintf("%s", p))
+	}
 	n, err = l.file.Write(p)
 
 	return n, err
